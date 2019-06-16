@@ -15,7 +15,7 @@ import * as invariant_ from 'invariant';
 // does not export a default
 // https://github.com/rollup/rollup/issues/1267
 const invariant = invariant_;
-import {createError, defaultErrorHandler, filterProps} from '../utils';
+import {createError, defaultErrorHandler, filterProps, DEFAULT_INTL_CONFIG} from '../utils';
 import {IntlConfig, IntlShape, IntlFormatters} from '../types';
 import {formatters} from '../format';
 import areIntlLocalesSupported from 'intl-locales-supported';
@@ -44,29 +44,15 @@ const intlFormatPropNames: Array<keyof IntlFormatters> = [
   'formatHTMLMessage',
 ];
 
-// These are not a static property on the `IntlProvider` class so the intl
-// config values can be inherited from an <IntlProvider> ancestor.
-const defaultProps = {
-  formats: {},
-  messages: {},
-  timeZone: undefined,
-  textComponent: 'span',
-
-  defaultLocale: 'en',
-  defaultFormats: {},
-
-  onError: defaultErrorHandler,
-};
-
 function getConfig(filteredProps: IntlConfig): IntlConfig {
   let config = {...filteredProps};
 
   // Apply default props. This must be applied last after the props have
   // been resolved and inherited from any <IntlProvider> in the ancestry.
   // This matches how React resolves `defaultProps`.
-  for (const propName in defaultProps) {
+  for (const propName in DEFAULT_INTL_CONFIG) {
     if (config[propName as 'timeZone'] === undefined) {
-      config[propName as 'timeZone'] = defaultProps[propName as 'timeZone'];
+      config[propName as 'timeZone'] = DEFAULT_INTL_CONFIG[propName as 'timeZone'];
     }
   }
 
@@ -89,7 +75,7 @@ function getConfig(filteredProps: IntlConfig): IntlConfig {
       ...config,
       locale: defaultLocale,
       formats: defaultFormats,
-      messages: defaultProps.messages,
+      messages: DEFAULT_INTL_CONFIG.messages,
     };
   }
 
@@ -124,6 +110,7 @@ interface State {
 
 class IntlProvider extends React.PureComponent<Props, State> {
   private _didDisplay?: boolean;
+  static defaultProps = DEFAULT_INTL_CONFIG
   constructor(props: Props) {
     super(props);
 
