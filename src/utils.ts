@@ -10,7 +10,7 @@ file in the root directory of React's source tree.
 */
 
 import * as invariant_ from 'invariant';
-import { IntlConfig } from './types';
+import {IntlConfig} from './types';
 // Since rollup cannot deal with namespace being a function,
 // this is to interop with TypeScript since `invariant`
 // does not export a default
@@ -74,7 +74,16 @@ export function defaultErrorHandler(error: string) {
 
 // These are not a static property on the `IntlProvider` class so the intl
 // config values can be inherited from an <IntlProvider> ancestor.
-export const DEFAULT_INTL_CONFIG: Pick<IntlConfig, 'formats' | 'messages' | 'timeZone' | 'textComponent' | 'defaultLocale' | 'defaultFormats' | 'onError'> = {
+export const DEFAULT_INTL_CONFIG: Pick<
+  IntlConfig,
+  | 'formats'
+  | 'messages'
+  | 'timeZone'
+  | 'textComponent'
+  | 'defaultLocale'
+  | 'defaultFormats'
+  | 'onError'
+> = {
   formats: {},
   messages: {},
   timeZone: undefined,

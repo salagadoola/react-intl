@@ -100,10 +100,10 @@ function getNamedFormat<T extends keyof CustomFormats>(
   name: string,
   onError: (err: string) => void
 ) {
-  const formatType= formats && formats[type]
-  let format
+  const formatType = formats && formats[type];
+  let format;
   if (formatType) {
-    format = formatType[name]
+    format = formatType[name];
   }
   if (format) {
     return format;
@@ -113,7 +113,12 @@ function getNamedFormat<T extends keyof CustomFormats>(
 }
 
 export function formatDate(
-  {locale, formats, onError, timeZone}: Pick<IntlConfig, 'locale' | 'formats' | 'onError' | 'timeZone'>,
+  {
+    locale,
+    formats,
+    onError,
+    timeZone,
+  }: Pick<IntlConfig, 'locale' | 'formats' | 'onError' | 'timeZone'>,
   state: Formatters,
   value: number | Date,
   options: FormatDateOptions = {}
@@ -140,7 +145,12 @@ export function formatDate(
 }
 
 export function formatTime(
-  {locale, formats, onError, timeZone}: Pick<IntlConfig, 'locale' | 'formats' | 'onError' | 'timeZone'>,
+  {
+    locale,
+    formats,
+    onError,
+    timeZone,
+  }: Pick<IntlConfig, 'locale' | 'formats' | 'onError' | 'timeZone'>,
   state: Formatters,
   value: number,
   options: FormatDateOptions = {}
@@ -176,7 +186,11 @@ export function formatTime(
 }
 
 export function formatRelative(
-  {locale, formats, onError}: Pick<IntlConfig, 'locale' | 'formats' | 'onError'>,
+  {
+    locale,
+    formats,
+    onError,
+  }: Pick<IntlConfig, 'locale' | 'formats' | 'onError'>,
   state: Formatters & {now(): number},
   value: number,
   options: FormatRelativeOptions = {}
@@ -212,7 +226,11 @@ export function formatRelative(
 }
 
 export function formatNumber(
-  {locale, formats, onError}: Pick<IntlConfig, 'locale' | 'formats' | 'onError'>,
+  {
+    locale,
+    formats,
+    onError,
+  }: Pick<IntlConfig, 'locale' | 'formats' | 'onError'>,
   state: Formatters,
   value: number,
   options: FormatNumberOptions = {}
@@ -237,7 +255,6 @@ export function formatPlural(
   value: number,
   options: FormatPluralOptions = {}
 ) {
-
   let filteredOptions = filterProps(options, PLURAL_FORMAT_OPTIONS);
 
   try {
@@ -250,7 +267,22 @@ export function formatPlural(
 }
 
 export function formatMessage(
-  {locale, formats, messages, defaultLocale, defaultFormats, onError}: Pick<IntlConfig, 'locale' | 'formats' | 'messages' | 'defaultLocale' | 'defaultFormats' | 'onError'>,
+  {
+    locale,
+    formats,
+    messages,
+    defaultLocale,
+    defaultFormats,
+    onError,
+  }: Pick<
+    IntlConfig,
+    | 'locale'
+    | 'formats'
+    | 'messages'
+    | 'defaultLocale'
+    | 'defaultFormats'
+    | 'onError'
+  >,
   state: {getMessageFormat: Formatters['getMessageFormat']},
   messageDescriptor: MessageDescriptor = {id: ''},
   values: Record<string, any> = {}
@@ -333,7 +365,7 @@ export function formatMessage(
 }
 
 export function formatHTMLMessage(...args: Parameters<typeof formatMessage>) {
-  const rawValues = args[3] || {}
+  const rawValues = args[3] || {};
   // Process all the values before they are used when formatting the ICU
   // Message string. Since the formatted message might be injected via
   // `innerHTML`, all String-based values need to be HTML-escaped.

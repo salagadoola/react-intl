@@ -27,7 +27,7 @@ const defaultFormatMessage: IntlShape['formatMessage'] = (
   return baseFormatMessage(
     {
       ...DEFAULT_INTL_CONFIG,
-      locale: 'en'
+      locale: 'en',
     },
     {getMessageFormat: memoizeIntlConstructor(IntlMessageFormat)},
     descriptor,

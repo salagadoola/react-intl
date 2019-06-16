@@ -15,7 +15,7 @@ import * as invariant_ from 'invariant';
 // does not export a default
 // https://github.com/rollup/rollup/issues/1267
 const invariant = invariant_;
-import {createError, defaultErrorHandler, filterProps, DEFAULT_INTL_CONFIG} from '../utils';
+import {createError, filterProps, DEFAULT_INTL_CONFIG} from '../utils';
 import {IntlConfig, IntlShape, IntlFormatters} from '../types';
 import {formatters} from '../format';
 import areIntlLocalesSupported from 'intl-locales-supported';
@@ -44,15 +44,19 @@ const intlFormatPropNames: Array<keyof IntlFormatters> = [
   'formatHTMLMessage',
 ];
 
-function getConfig(filteredProps: IntlConfig): IntlConfig {
-  let config = {...filteredProps};
+function getConfig(filteredProps: OptionalIntlConfig): IntlConfig {
+  let config: IntlConfig = {
+    ...DEFAULT_INTL_CONFIG,
+    ...filteredProps,
+  };
 
   // Apply default props. This must be applied last after the props have
   // been resolved and inherited from any <IntlProvider> in the ancestry.
   // This matches how React resolves `defaultProps`.
   for (const propName in DEFAULT_INTL_CONFIG) {
     if (config[propName as 'timeZone'] === undefined) {
-      config[propName as 'timeZone'] = DEFAULT_INTL_CONFIG[propName as 'timeZone'];
+      config[propName as 'timeZone'] =
+        DEFAULT_INTL_CONFIG[propName as 'timeZone'];
     }
   }
 
@@ -98,20 +102,26 @@ function getBoundFormatFns(config: IntlConfig, state: State) {
   ) as IntlFormatters;
 }
 
-interface Props extends IntlConfig, WrappedComponentProps {
+interface InternalProps {
   children: React.ElementType<any>;
   initialNow?: number;
 }
+
+type Props = IntlConfig & WrappedComponentProps & InternalProps;
 
 interface State {
   context: IntlShape;
   filteredProps?: IntlConfig;
 }
 
-class IntlProvider extends React.PureComponent<Props, State> {
+type OptionalIntlConfig = Omit<IntlConfig, keyof typeof DEFAULT_INTL_CONFIG> &
+  Partial<typeof DEFAULT_INTL_CONFIG>;
+
+type ResolvedProps = WrappedComponentProps & InternalProps & OptionalIntlConfig;
+
+class IntlProvider extends React.PureComponent<ResolvedProps, State> {
   private _didDisplay?: boolean;
-  static defaultProps = DEFAULT_INTL_CONFIG
-  constructor(props: Props) {
+  constructor(props: ResolvedProps) {
     super(props);
 
     invariant(
@@ -162,7 +172,7 @@ class IntlProvider extends React.PureComponent<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+  static getDerivedStateFromProps(nextProps: ResolvedProps, prevState: State) {
     const {intl: intlContext} = nextProps;
 
     // Build a whitelisted config object from `props`, defaults, and
